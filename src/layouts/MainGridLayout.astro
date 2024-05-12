@@ -2,10 +2,10 @@
 import Layout from "./Layout.astro";
 import Navbar from "@components/Navbar.astro";
 import SideBar from "@components/widget/SideBar.astro";
-import {pathsEqual} from "@utils/url-utils";
+import { pathsEqual } from "@utils/url-utils";
 import Footer from "@components/Footer.astro";
 import BackToTop from "@components/control/BackToTop.astro";
-import {siteConfig} from "@/config";
+import { siteConfig } from "@/config";
 
 interface Props {
     title: string;
@@ -13,34 +13,97 @@ interface Props {
     description?: string;
 }
 
-const { title, banner, description } = Astro.props
-const isHomePage = pathsEqual(Astro.url.pathname, '/')
-const enableBanner = siteConfig.banner.enable
-
+const { title, banner, description } = Astro.props;
+const isHomePage = pathsEqual(Astro.url.pathname, '/');
+const enableBanner = siteConfig.banner.enable;
 ---
 
 <Layout title={title} banner={banner} description={description}>
-<slot slot="head" name="head"></slot>
-<div class="max-w-[var(--page-width)] min-h-screen grid grid-cols-[17.5rem_auto] grid-rows-[auto_auto_1fr_auto] lg:grid-rows-[auto_1fr_auto]
-    mx-auto gap-4 relative px-0 md:px-4"
->
-    <div id="top-row" class="col-span-2 grid-rows-1 z-50 onload-animation" class:list={[""]}>
-        <div class="absolute h-8 left-0 right-0 -top-8 bg-[var(--card-bg)] transition"></div> <!-- used for onload animation -->
-        <Navbar></Navbar>
+    <slot slot="head" name="head"></slot>
+<div class="togbtn p-3">
+    <!-- Toggle button for sidebar visibility -->
+    <p class="fixed top-0 right-0 p-6 z-50 text-gray-400 p-2">Toggle Sidebar</p>
+    <div class="fixed top-4 right-3 p-6 z-50">
+        
+        <!-- <label for="toggleButton" class="text-gray-500 mr-2">Off</label> -->
+        <button id="toggleButton" class="relative w-12 h-6 bg-gray-300 rounded-full focus:outline-none">
+            <span class="absolute p-4 left-0 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform"></span>
+        </button>
+        <!-- <label for="toggleButton" class="text-gray-500 ml-2">On</label> -->
     </div>
-    <SideBar class="row-start-3 row-end-4 col-span-2 lg:row-start-2 lg:row-end-3 lg:col-span-1 lg:max-w-[17.5rem] onload-animation"></SideBar>
-
-    <div id="content-wrapper" class="row-start-2 row-end-3 col-span-2 lg:col-span-1 overflow-hidden onload-animation">
-        <!-- the overflow-hidden here prevent long text break the layout-->
-        <main id="swup" class="transition-fade">
-            <slot></slot>
-        </main>
-
     </div>
 
-    <div id="footer" class="grid-rows-3 col-span-2 mt-4 onload-animation">
-        <Footer></Footer>
+    <div class="max-w-[var(--page-width)] min-h-screen grid grid-cols-[17.5rem_auto] grid-rows-[auto_auto_1fr_auto] lg:grid-rows-[auto_1fr_auto] mx-auto gap-4 relative px-0 md:px-4">
+        <div id="top-row" class="col-span-2 grid-rows-1 z-50 onload-animation">
+            <div class="absolute h-8 left-0 right-0 -top-8 bg-[var(--card-bg)] transition"></div> <!-- used for onload animation -->
+            <Navbar></Navbar>
+        </div>
+
+        <!-- Conditionally render the sidebar based on a variable -->
+        <SideBar id="sidebar" class="row-start-3 row-end-4 col-span-2 lg:row-start-2 lg:row-end-3 lg:col-span-1 lg:max-w-[17.5rem] onload-animation" style="display: none;"></SideBar>
+
+        <div id="content-wrapper" class="row-start-2 row-end-3 col-span-2 lg:col-span-1 overflow-hidden onload-animation">
+            <main id="swup" class="transition-fade">
+                <slot></slot>
+            </main>
+        </div>
+
+        <div id="footer" class="grid-rows-3 col-span-2 mt-4 onload-animation">
+            <Footer></Footer>
+        </div>
+        <BackToTop></BackToTop>
     </div>
-    <BackToTop></BackToTop>
-</div>
+
+    <script>
+        const toggleButton = document.getElementById('toggleButton');
+        const sidebar = document.getElementById('sidebar');
+        const contentWrapper = document.getElementById('content-wrapper');
+    
+        
+        toggleButton.addEventListener('click', () => {
+            
+            toggleButton.classList.toggle('toggled-on');
+
+            // Toggle sidebar visibility
+            if (sidebar.style.display === 'none') {
+                sidebar.style.display = 'block';
+                // Apply styles to #content-wrapper when sidebar is shown
+                contentWrapper.classList.add('lg:col-span-1');
+                contentWrapper.classList.remove('col-span-full');toggleButton?.classList.add('bg-red-100');
+                toggleButton?.classList.remove('bg-green-100') ;
+              
+            } else {
+                sidebar.style.display = 'none';
+                // Revert styles when sidebar is hidden
+                contentWrapper.classList.add('col-span-full');
+                contentWrapper.classList.remove('lg:col-span-1');
+                 toggleButton?.classList.add('bg-green-100');
+                toggleButton?.classList.remove('bg-red-100');
+
+            }
+        });
+    </script>
+    <style>
+        /* Positioning the circle within the button */
+        #toggleButton span {
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Styling for the circle */
+        #toggleButton span::before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: #454545; /* Green color when toggled on */
+            border-radius: 50%;
+        }
+        /* Style for the toggle button when it's toggled on */
+        #toggleButton.toggled-on span {
+            transform: translate(100%, -50%);
+            
+        }
+    </style>
+    
+    
 </Layout>
