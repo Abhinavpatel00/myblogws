@@ -58,11 +58,72 @@ let links: NavBarLink[] = navBarConfig.links.map((item: NavBarLink | LinkPreset)
         </button>
     </div>
     <NavMenuPanel links={links}></NavMenuPanel>
-    <DisplaySettings client:only="svelte">
+    <DisplaySettings class="" client:only="svelte">
         <Icon slot="restore-icon" name="fa6-solid:arrow-rotate-left" size={"0.875rem"} class=""></Icon>
     </DisplaySettings>
+    <div class=" sticky pr-4">
+        <!-- Toggle button for sidebar visibility -->
+        <!-- <p class="absolute top-0 right-0 z-100 text-gray-400 p-2 sm:hidden md:invisible sm:invisible lg:invisible">Toggle Sidebar</p> -->
+        <div class="fixed top-4 right-3 z-50">
+            <button id="toggleButton" class="relative w-12 h-6 bg-gray-300 rounded-full focus:outline-none">
+                <span class="absolute p-4 left-0 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform"></span>
+            </button>
+        </div>
+    </div>
+    
 </div>
 
+
+<script>
+    const toggleButton = document.getElementById('toggleButton');
+    const sidebar = document.getElementById('sidebar');
+    const contentWrapper = document.getElementById('content-wrapper');
+
+    
+    toggleButton.addEventListener('click', () => {
+        
+        toggleButton.classList.toggle('toggled-on');
+
+        // Toggle sidebar visibility
+        if (sidebar.style.display === 'none') {
+            sidebar.style.display = 'block';
+            // Apply styles to #content-wrapper when sidebar is shown
+            contentWrapper.classList.add('lg:col-span-1');
+            contentWrapper.classList.remove('col-span-full');toggleButton?.classList.add('bg-red-100');
+            toggleButton?.classList.remove('bg-green-100') ;
+          
+        } else {
+            sidebar.style.display = 'none';
+            // Revert styles when sidebar is hidden
+            contentWrapper.classList.add('col-span-full');
+            contentWrapper.classList.remove('lg:col-span-1');
+             toggleButton?.classList.add('bg-green-100');
+            toggleButton?.classList.remove('bg-red-100');
+
+        }
+    });
+</script>
+<style>
+    /* Positioning the circle within the button */
+    #toggleButton span {
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+    /* Styling for the circle */
+    #toggleButton span::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: #454545; /* Green color when toggled on */
+        border-radius: 50%;
+    }
+    /* Style for the toggle button when it's toggled on */
+    #toggleButton.toggled-on span {
+        transform: translate(100%, -50%);
+        
+    }
+</style>
 <style lang="stylus">
 </style>
 
@@ -118,3 +179,4 @@ async function loadPagefind() {
 }
 loadPagefind()
 </script>}
+
