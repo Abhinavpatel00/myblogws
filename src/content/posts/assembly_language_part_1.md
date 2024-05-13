@@ -3,7 +3,7 @@ title: Demystifying Computers: A Date with Electrons
 published: 2023-08-01
 description: exploration of computers and computation with the eyes of human 
 tags: [Computer Science, Logic Gates, CPU Architecture]
-category: computer architecture
+category: computer-architecture
 draft: false
 ---
 
